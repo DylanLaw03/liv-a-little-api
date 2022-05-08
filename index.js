@@ -6,6 +6,7 @@ const app = express();
 // home page
 app.get('/', async (req, res) => {
     res.send("hello!")
+    console.log("Request Received")
 })
 
 app.post('/uploadPost', async (req, res) => {
