@@ -12,6 +12,7 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
+  console.log(req.body.postImg)
   cloudinary.uploader.upload(req.body.postImg);
 })
 const port = process.env.PORT || 5000;
