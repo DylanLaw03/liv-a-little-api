@@ -8,6 +8,9 @@ app.get('/', async (req, res) => {
     res.send("hello!")
 })
 
-const port = process.env.PORT || 3000;
+app.post('/uploadPost', async (req, res) => {
+  console.log(req.body.key1)
+})
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`App listening on PORT: ${port}`));
