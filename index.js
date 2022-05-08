@@ -10,7 +10,7 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
-  console.log(req.body.key1)
+  console.log(req.body.postbody)
 })
 const port = process.env.PORT || 5000;
 
