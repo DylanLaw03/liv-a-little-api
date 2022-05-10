@@ -12,6 +12,7 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
+  console.log("New Post!")
   console.log(req.body.postImg)
   cloudinary.uploader.upload(req.body.postImg);
 })
