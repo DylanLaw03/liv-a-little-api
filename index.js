@@ -1,10 +1,20 @@
 const express = require('express');
 require("dotenv").config();
-const cloudinary = require('cloudinary').v2;
+const cors = require('cors');
+
+
+
 
 // create app 
 const app = express();
 app.use(express.json({limit: "15mb"}));
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // home page
 app.get('/', async (req, res) => {
     res.send("hello!")
@@ -12,9 +22,6 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.send();
-
   console.log("New Post!");
   console.log(req.body.postImg);
 })
