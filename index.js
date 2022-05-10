@@ -3,8 +3,6 @@ require("dotenv").config();
 const cors = require('cors');
 
 
-
-
 // create app 
 const app = express();
 app.use(express.json({limit: "15mb"}));
@@ -24,6 +22,8 @@ app.get('/', async (req, res) => {
 app.post('/uploadPost', async (req, res) => {
   console.log("New Post!");
   console.log(req.body.postImg);
+
+  res.send(200);
 })
 const port = process.env.PORT || 5000;
 
