@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.18.1",
+    "pg": "^8.7.3",
     "react-images-upload": "^1.2.8"
   }
 }

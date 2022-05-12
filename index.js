@@ -2,7 +2,23 @@ const express = require('express');
 require("dotenv").config();
 const cors = require('cors');
 
+const { Client, Pool } = require('pg');
 
+const client = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  sslmode: "require",
+});
+
+// function to upload post text
+const uploadPost = async (db, postBody, postImg) => {
+  //open db connection
+  db.connect();
+
+  //insert Post body, return postID
+  let result = await db.query('INSERT INTO postTbl (postBody) VALUES (${postBody}) RETURNING postID');
+
+  console.log(result);
+}
 // create app 
 const app = express();
 app.use(express.json({limit: "15mb"}));
@@ -20,10 +36,11 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
-  console.log("New Post!");
-  console.log(req.body.postImg);
+  console.log(req.body.postBody);
+ 
+  uploadPost(client, req.body.postBody, "Not here");
 
-  res.send(200);
+  res.sendStatus(200);
 })
 const port = process.env.PORT || 5000;
 
