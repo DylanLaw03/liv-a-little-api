@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const { Client, Pool } = require('pg');
 
-const client = new Pool({
+const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
