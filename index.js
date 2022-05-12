@@ -29,7 +29,7 @@ const uploadPost = async (db, postBody, postImg) => {
   //insert Post body, return postID
   let result = await db.query("INSERT INTO postTbl (postBody) VALUES ('${postBody}') RETURNING postID");
 
-  console.log(result.postid);
+  console.log(result.rows);
   
   db.end();
 }
