@@ -27,11 +27,14 @@ const uploadPost = async (db, postBody, postImg) => {
   db.connect();
 
   //insert Post body, return postID
-  let result = await db.query("INSERT INTO postTbl (postBody) VALUES ('${postBody}') RETURNING postID");
+  let result = await db.query(`INSERT INTO postTbl (postBody) VALUES ('${postBody}') RETURNING postID`);
 
-  console.log(result.rows[0].postid);
-  console.log(result.rows[0]['postid']);
+  const postId = (result.rows[0].postid);
   
+  // insert image with post id
+  result = await db.query(`INSERT INTO postImages (postid, base64) VALUES ('${postId}', '${postImg}')`);
+
+
   db.end();
 }
 
