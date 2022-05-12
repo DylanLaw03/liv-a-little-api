@@ -11,16 +11,6 @@ const client = new Client({
   }
 });
 
-// function to upload post text
-const uploadPost = async (db, postBody, postImg) => {
-  //open db connection
-  db.connect();
-
-  //insert Post body, return postID
-  let result = await db.query('INSERT INTO postTbl (postBody) VALUES (${postBody}) RETURNING postID');
-
-  console.log(result);
-}
 // create app 
 const app = express();
 app.use(express.json({limit: "15mb"}));
@@ -30,6 +20,19 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+// function to upload post text
+const uploadPost = async (db, postBody, postImg) => {
+  //open db connection
+  db.connect();
+
+  //insert Post body, return postID
+  let result = await db.query("INSERT INTO postTbl (postBody) VALUES ('${postBody}') RETURNING postID");
+
+  console.log(result);
+  
+  db.end();
+}
 
 // home page
 app.get('/', async (req, res) => {
