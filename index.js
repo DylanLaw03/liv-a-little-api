@@ -6,7 +6,9 @@ const { Client, Pool } = require('pg');
 
 const client = new Pool({
   connectionString: process.env.DATABASE_URL,
-  sslmode: "require",
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // function to upload post text
