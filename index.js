@@ -47,7 +47,7 @@ app.get('/', async (req, res) => {
 app.post('/uploadPost', async (req, res) => {
   console.log(req.body.postBody);
  
-  uploadPost(client, req.body.postBody, "Not here");
+  uploadPost(client, req.body.postBody, req.body.postImg);
 
   res.sendStatus(200);
 })
