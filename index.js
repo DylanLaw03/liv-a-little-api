@@ -88,7 +88,7 @@ app.post('/getPosts', async (req, res) => {
   const lowerBound = parseInt(req.body.lowerBound);
   const upperBound = parseInt(req.body.upperBound);
 
-  console.log(lowerBound, upperBound);
+  console.log(typeof(req.body.lowerBound), upperBound);
   // get posts
   let result = await getPosts(client, lowerBound, upperBound);
 
@@ -102,8 +102,6 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
-  console.log(req.body.postBody);
-  console.log(req.body.postImg)
   let uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
 
 
