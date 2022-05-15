@@ -67,7 +67,7 @@ const uploadPost = async (db, postBody, postImg) => {
   function(error) {
     // send non 200 code back if there was an issue uploading
     if (error != undefined) {
-      res.sendStatus(400);
+      return 1;
     }
   });
 
@@ -76,6 +76,9 @@ const uploadPost = async (db, postBody, postImg) => {
   
   // close db
   db.end();
+
+  // return 0 if no errors
+  return 0;
 };
 
 // get posts
@@ -101,9 +104,14 @@ app.get('/', async (req, res) => {
 app.post('/uploadPost', async (req, res) => {
   console.log(req.body.postBody);
  
-  uploadPost(client, req.body.postBody, req.body.postImg);
+  const uploadStatus = uploadPost(client, req.body.postBody, req.body.postImg);
 
-  res.sendStatus(200);
+
+  if (uploadStatus === 0) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(400);
+  }
 })
 const port = process.env.PORT || 5000;
 
