@@ -7,7 +7,7 @@ const { Client, Pool } = require('pg');
 
 cloudinary.config().cloud_name;
 
-const client = new Client({
+const client = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
