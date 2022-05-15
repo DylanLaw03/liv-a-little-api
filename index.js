@@ -24,6 +24,29 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+// function to retrieve posts,
+// returns result rows
+const getPosts = async (db, lowerBound, upperBound) => {
+  // let posts be empty obj, to be returned as JSON
+  let posts = {}
+  
+  //open db connection
+  db.connect();
+
+  // query lower bound to upper bound for post body
+  let result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
+
+  posts = result.rows;
+
+  // get id of last post to know which images need to be searched for, update upperBound
+  upperBound = posts[posts.length - 1]
+
+  console.log(upperBound);
+
+  return result.rows;
+}
+
 // function to upload post text
 const uploadPost = async (db, postBody, postImg) => {
 
@@ -37,7 +60,9 @@ const uploadPost = async (db, postBody, postImg) => {
   const postId = (result.rows[0].postid);
   
   // upload image
-  let cloudinaryResponse = await cloudinary.uploader.upload(postImg,
+  let cloudinaryResponse = await cloudinary.uploader.upload(postImg, 
+  // set dir
+  {folder: "post-images"},
   // handle any errors 
   function(error) {
     // send non 200 code back if there was an issue uploading
@@ -47,11 +72,25 @@ const uploadPost = async (db, postBody, postImg) => {
   });
 
   // if it all works, upload image url to DB
-  result = await db.query(`INSERT INTO postImages (postid, base64) VALUES ('${postId}', '${cloudinaryResponse.url}')`);
+  result = await db.query(`INSERT INTO postImages (postid, imageURL) VALUES ('${postId}', '${cloudinaryResponse.url}')`);
   
   // close db
   db.end();
-}
+};
+
+// get posts
+// insert range of posts you want (lowerBound, upperBound(exclusive)), returns JSON of Posts, each Post has post #, post img url, and post body
+app.post('/getPosts', async (req, res) => {
+  // save bounds as ints
+  const lowerBound = parseInt(req.body.lowerBound);
+  const upperBound = parseInt(req.body.upperBound);
+
+  console.log(lowerBound, upperBound);
+  // get posts
+  let result = await getPosts(client, lowerBound, upperBound);
+
+  res.send("Hi");
+})
 
 // home page
 app.get('/', async (req, res) => {
