@@ -92,7 +92,7 @@ app.post('/getPosts', async (req, res) => {
   // get posts
   let result = await getPosts(client, lowerBound, upperBound);
 
-  res.send("Hi");
+  res.send(result);
 })
 
 // home page
