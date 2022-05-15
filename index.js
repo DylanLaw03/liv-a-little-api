@@ -104,7 +104,7 @@ app.get('/', async (req, res) => {
 app.post('/uploadPost', async (req, res) => {
   console.log(req.body.postBody);
  
-  const uploadStatus = uploadPost(client, req.body.postBody, req.body.postImg);
+  const uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
 
 
   if (uploadStatus === 0) {
