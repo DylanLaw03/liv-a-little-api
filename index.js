@@ -28,23 +28,27 @@ app.use(function(req, res, next) {
 // function to retrieve posts,
 // returns result rows
 const getPosts = async (db, lowerBound, upperBound) => {
-  // let posts be empty obj, to be returned as JSON
-  let posts = {}
-  
-  //open db connection
+  // open db connection
   db.connect();
 
   // query lower bound to upper bound for post body
   let result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
 
-  posts = result.rows;
+  let posts = result.rows;
 
   // get id of last post to know which images need to be searched for, update upperBound
   upperBound = posts[posts.length - 1]
 
-  console.log(upperBound);
+  // now get image links
+  result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
 
-  return result.rows;
+  // now add image links to posts
+  for (let i = 0; i < posts.length(); i++) {
+    posts[i]["imageurl"] = result.rows[i];
+  }
+
+
+  return posts;
 }
 
 // function to upload post text
