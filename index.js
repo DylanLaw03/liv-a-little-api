@@ -16,7 +16,7 @@ const client = new Pool({
 });
 
 // connect pool
-await client.connect();
+client.connect();
 
 // create app 
 const app = express();
