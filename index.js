@@ -4,6 +4,7 @@ const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
 
 const { Client, Pool } = require('pg');
+const { client_encoding } = require('pg/lib/defaults');
 
 cloudinary.config().cloud_name;
 
@@ -14,35 +15,52 @@ const client = new Pool({
   }
 });
 
+// connect pool
+client.connect();
+
 // create app 
 const app = express();
 app.use(express.json({limit: "15mb"}));
 
+// setup cors
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
+// getPostBody
+const getPostBody = async(db, lowerBound, upperBound) => {
+  // query lower bound to upper bound for post body
+  const result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
+  console.log(result);
+
+  return result.rows;
+}
+
+const getPostImages = async(db, lowerBound, upperBound) => {
+   // query lower bound to upper bound for post images
+  const result = await db.query(`SELECT * FROM postimages WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
+  console.log(result)
+  return result.rows;
+  
+}
 
 // function to retrieve posts,
 // returns result rows
 const getPosts = async (db, lowerBound, upperBound) => {
-  // open db connection
-  db.connect();
-
   // query lower bound to upper bound for post body
-  let result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
+  const postResult = await getPostBody(db, 55, 60);
 
-  let posts = result.rows;
-
+  let posts = postResult;
+  
   // get id of last post to know which images need to be searched for, update upperBound
   upperBound = posts[posts.length - 1]
+  
+  const imageResult = await getPostImages(db, 55, 60);
 
-  // now get image links
-  result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
+  console.log(imageResult);
 
-  console.log(result.rows)
   /* now add image links to posts
   for (let i = 0; i < posts.length; i++) {
     posts[i]["imageurl"] = result.rows[i];
@@ -93,7 +111,6 @@ app.post('/getPosts', async (req, res) => {
   const lowerBound = parseInt(req.body.lowerBound);
   const upperBound = parseInt(req.body.upperBound);
 
-  console.log(typeof(req.body.lowerBound), upperBound);
   // get posts
   let result = await getPosts(client, lowerBound, upperBound);
 
@@ -107,8 +124,11 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
-  let uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
-
+  try {
+    let uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
+  } catch (error) {
+    console.log(error)
+  }
 
   if (uploadStatus === 0) {
     res.sendStatus(200);
