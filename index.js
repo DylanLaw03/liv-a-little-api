@@ -16,7 +16,7 @@ const client = new Pool({
 });
 
 // connect pool
-
+await client.connect();
 
 // create app 
 const app = express();
@@ -31,25 +31,18 @@ app.use(function(req, res, next) {
 
 // getPostBody
 const getPostBody = async(db, lowerBound, upperBound) => {
-  db.connect();
-
   // query lower bound to upper bound for post body
   const result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
   console.log(result);
 
-  db.end();
+  
   return result.rows;
 }
 
 const getPostImages = async(db, lowerBound, upperBound) => {
-  db.connect();
-
    // query lower bound to upper bound for post images
   const result = await db.query(`SELECT * FROM postimages WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
   console.log(result)
-
-  
-  db.end();
 
   return result.rows;
 }
