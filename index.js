@@ -81,7 +81,7 @@ const uploadPost = async (db, postBody, postImg) => {
 
   // save post id
   const postId = (result.rows[0].postid);
-  
+  console.log(postImg)
   // upload image
   let cloudinaryResponse = await cloudinary.uploader.upload(postImg, 
   // set dir
@@ -125,13 +125,8 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
+  let uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
 
-
-  try {
-    let uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
-  } catch (error) {
-    console.log(error)
-  }
 
   if (uploadStatus === 0) {
     res.sendStatus(200);
