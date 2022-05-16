@@ -42,7 +42,7 @@ const getPosts = async (db, lowerBound, upperBound) => {
   // now get image links
   result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
 
-  console.log(result)
+  console.log(result.rows)
   /* now add image links to posts
   for (let i = 0; i < posts.length; i++) {
     posts[i]["imageurl"] = result.rows[i];
