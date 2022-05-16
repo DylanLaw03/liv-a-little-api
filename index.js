@@ -41,7 +41,7 @@ const getPostBody = async(db, lowerBound, upperBound) => {
 
 const getPostImages = async(db, lowerBound, upperBound) => {
    // query lower bound to upper bound for post images
-  const result = await db.query(`SELECT * FROM postimages WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
+  const result = await db.query(`SELECT * FROM postimages WHERE postid >= 1 and postid < 11`);
   console.log(result)
 
   return result.rows;
