@@ -40,8 +40,12 @@ const getPostBody = async(db, lowerBound, upperBound) => {
 }
 
 const getPostImages = async(db, lowerBound, upperBound) => {
-   // query lower bound to upper bound for post images
-  const result = await db.query(`SELECT * FROM postimages WHERE postid >= 1 and postid < 11`);
+  // create query and param
+  const query = "SELECT * FROM postimages WHERE postid >= $1 and postid < $2";
+  const values = [lowerBound, upperBound];
+  
+  // query lower bound to upper bound for post images
+  const result = await db.query(query, values);
   console.log(result)
 
   return result.rows;
@@ -56,15 +60,17 @@ const getPosts = async (db, lowerBound, upperBound) => {
   let posts = postResult;
 
   // get id of last post to know which images need to be searched for, update upperBound
-  upperBound = posts[posts.length - 1]
-  
+  upperBound = posts[posts.length - 1].postid + 1;
+
   const imageResult = await getPostImages(db, lowerBound, upperBound);
 
-  /* now add image links to posts
-  for (let i = 0; i < posts.length; i++) {
-    posts[i]["imageurl"] = result.rows[i];
-  }*/
 
+  // now add image links to posts
+  for (let i = 0; i < posts.length; i++) {
+    posts[i]["imageurl"] = imageResult[i].imageurl;
+  }
+
+  console.log(posts)
 
   return posts;
 }
@@ -112,7 +118,6 @@ app.post('/getPosts', async (req, res) => {
   let result = await getPosts(client, lowerBound, upperBound);
 
   res.send(result);
-  res.sendStatus(200);
 })
 
 // home page
