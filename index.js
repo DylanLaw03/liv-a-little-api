@@ -97,9 +97,6 @@ const uploadPost = async (db, postBody, postImg) => {
 
   // if it all works, upload image url to DB
   result = await db.query(`INSERT INTO postImages (postid, imageURL) VALUES ('${postId}', '${cloudinaryResponse.url}')`);
-  
-  // close db
-  db.end();
 
   // return 0 if no errors
   return 0;
