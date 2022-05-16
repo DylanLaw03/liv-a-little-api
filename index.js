@@ -50,15 +50,14 @@ const getPostImages = async(db, lowerBound, upperBound) => {
 // returns result rows
 const getPosts = async (db, lowerBound, upperBound) => {
   // query lower bound to upper bound for post body
-  const postResult = await getPostBody(db, 55, 60);
+  const postResult = await getPostBody(db, lowerBound, upperBound);
 
   let posts = postResult;
-  
+  console.log(postResult);
   // get id of last post to know which images need to be searched for, update upperBound
   upperBound = posts[posts.length - 1]
   
-  const imageResult = await getPostImages(db, 55, 60);
-
+  const imageResult = await getPostImages(db, lowerBound, upperBound);
   console.log(imageResult);
 
   /* now add image links to posts
@@ -113,6 +112,7 @@ app.post('/getPosts', async (req, res) => {
   let result = await getPosts(client, lowerBound, upperBound);
 
   res.send(result);
+  res.sendStatus(200);
 })
 
 // home page
