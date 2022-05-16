@@ -90,6 +90,7 @@ const uploadPost = async (db, postBody, postImg) => {
   function(error) {
     // send non 200 code back if there was an issue uploading
     if (error != undefined) {
+      console.log(error);
       return 1;
     }
   });
@@ -124,6 +125,8 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/uploadPost', async (req, res) => {
+
+
   try {
     let uploadStatus = await uploadPost(client, req.body.postBody, req.body.postImg);
   } catch (error) {
