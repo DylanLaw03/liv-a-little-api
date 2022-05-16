@@ -53,12 +53,11 @@ const getPosts = async (db, lowerBound, upperBound) => {
   const postResult = await getPostBody(db, lowerBound, upperBound);
 
   let posts = postResult;
-  console.log(postResult);
+
   // get id of last post to know which images need to be searched for, update upperBound
   upperBound = posts[posts.length - 1]
   
   const imageResult = await getPostImages(db, lowerBound, upperBound);
-  console.log(imageResult);
 
   /* now add image links to posts
   for (let i = 0; i < posts.length; i++) {
