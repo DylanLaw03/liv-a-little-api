@@ -70,7 +70,6 @@ const getPosts = async (db, lowerBound, upperBound) => {
     posts[i]["imageurl"] = imageResult[i].imageurl;
   }
 
-  console.log(posts)
 
   return posts;
 }
