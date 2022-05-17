@@ -109,7 +109,7 @@ const uploadPost = async (db, postBody, postImg) => {
 // get posts
 // insert range of posts you want (lowerBound, upperBound(exclusive)), returns JSON of Posts, each Post has post #, post img url, and post body
 app.post('/getPosts', async (req, res) => {
-  console.log(req);
+  console.log(req.body);
 
   // save bounds as ints
   const lowerBound = parseInt(req.body.lowerBound);
