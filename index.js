@@ -33,7 +33,7 @@ app.use(function(req, res, next) {
 const getPostBody = async(db, lowerBound, upperBound) => {
   // query lower bound to upper bound for post body
   const result = await db.query(`SELECT * FROM posttbl WHERE postid >= ${lowerBound} and postid < ${upperBound}`);
-  console.log(result);
+
 
   
   return result.rows;
@@ -46,7 +46,7 @@ const getPostImages = async(db, lowerBound, upperBound) => {
   
   // query lower bound to upper bound for post images
   const result = await db.query(query, values);
-  console.log(result)
+
 
   return result.rows;
 }
