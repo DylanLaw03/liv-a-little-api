@@ -29,6 +29,16 @@ app.use(function(req, res, next) {
   next();
 });
 
+// get max post id
+const getMaxPost = async(db) => {
+  const query = "SELECT MAX(postid) from posttbl";
+
+  const result = await db.query(query);
+
+  return result.rows;
+}
+
+
 // getPostBody
 const getPostBody = async(db, lowerBound, upperBound) => {
   // query lower bound to upper bound for post body
@@ -77,15 +87,12 @@ const getPosts = async (db, lowerBound, upperBound) => {
 // function to upload post text
 const uploadPost = async (db, postBody, postImg) => {
 
-  //open db connection
-  db.connect();
 
   //insert Post body, return postID
   let result = await db.query(`INSERT INTO postTbl (postBody) VALUES ('${postBody}') RETURNING postID`);
 
   // save post id
   const postId = (result.rows[0].postid);
-  console.log(postImg)
   // upload image
   let cloudinaryResponse = await cloudinary.uploader.upload(postImg, 
   // set dir
@@ -105,6 +112,16 @@ const uploadPost = async (db, postBody, postImg) => {
   // return 0 if no errors
   return 0;
 };
+
+// returns post id of highest post
+app.get('/getMaxPost', async (req, res) => {
+  
+
+  const result = await getMaxPost(client);
+
+  res.send(result);
+});
+
 
 // get posts
 // insert range of posts you want (lowerBound, upperBound(exclusive)), returns JSON of Posts, each Post has post #, post img url, and post body
