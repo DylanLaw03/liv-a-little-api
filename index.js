@@ -1,33 +1,13 @@
 const express = require('express');
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
-const cors = require('cors');
+const nodemailer = require('nodemailer');
+const { Pool } = require('pg');
 
-const { Client, Pool } = require('pg');
-const { client_encoding } = require('pg/lib/defaults');
 
 cloudinary.config().cloud_name;
 
-const client = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
-// connect pool
-client.connect();
-
-// create app 
-const app = express();
-app.use(express.json({limit: "15mb"}));
-
-// setup cors
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+/// HELPER FUNCTIONS. need to be refactored to another file
 
 // get max post id
 const getMaxPost = async(db) => {
@@ -113,10 +93,38 @@ const uploadPost = async (db, postBody, postImg) => {
   return 0;
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const client = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+// connect pool
+client.connect();
+
+// create app 
+const app = express();
+app.use(express.json({limit: "15mb"}));
+
+// setup cors
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // returns post id of highest post
 app.get('/getMaxPost', async (req, res) => {
   
-
   const result = await getMaxPost(client);
 
   res.send(result);
@@ -155,6 +163,46 @@ app.post('/uploadPost', async (req, res) => {
     res.sendStatus(400);
   }
 })
+
+// endpoint to send purchase request
+
+// takes name, contactInfo, and numStickers
+app.post('/purchaseRequest', async(req, res) => {
+  // define email to send from 'transporter'
+  const transporter = new nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: "OAuth2",
+      user: process.env.GOOGLE_EMAIL,
+      pass: process.env.GOOGLE_PASSWORD,
+      clientId: process.env.GOOGLE_CLIENTID,
+      clientSecret: process.env.GOOGLE_SECRET_TOKEN,
+      refreshToken: process.env.GOOGLE_REFRESH_TOKEN
+    }
+  })
+
+  // define message body
+  const messageBody = `Hello!\n${req.body.name} has requested to purchase ${req.body.numStickers} stickers.\nTheir contact information is: ${req.body.contactInfo}`;
+
+
+  // define email to send
+  var mailOptions = {
+    from: process.env.GOOGLE_EMAIL,
+    to: process.env.TEST_EMAIL,
+    subject: 'A Request to Purchase Stickers',
+    text: messageBody
+  };
+
+  // send email
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+})
+
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`App listening on PORT: ${port}`));
